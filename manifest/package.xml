@@ -3,6 +3,7 @@
     <types>
         <members>AccountController</members>
         <members>ContactController</members>
+         <members>MyClass</members>
         <name>ApexClass</name>
     </types>
     <types>
