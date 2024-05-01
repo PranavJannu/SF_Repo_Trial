@@ -4,6 +4,7 @@
         <members>AccountController</members>
         <members>ContactController</members>
          <members>MyClass</members>
+         <members>MyTest</members>
         <name>ApexClass</name>
     </types>
     <types>

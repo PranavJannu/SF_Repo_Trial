@@ -19,6 +19,15 @@ node {
     }
 
     withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
+        stage('Run Tests') {
+            // Add your test commands here
+            if (isUnix()) {
+                sh "${toolbelt} force:apex:test:run -u ${HUB_ORG} -w 10"
+            } else {
+                bat "\"${toolbelt}\" force:apex:test:run -u ${HUB_ORG} -w 10"
+            }
+        }
+        
         stage('Deploy Code') {
             if (isUnix()) {
                 sh "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
