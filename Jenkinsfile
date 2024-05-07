@@ -18,6 +18,24 @@ node {
     }
 
     withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
+        stage('Validate Package.xml') {
+            // Read the package.xml file
+            def packageXmlContent = readFile('manifest/package.xml')
+            // Parse package.xml to extract metadata components
+            def metadataTypes = packageXmlContent.readLines().findAll { it.contains('<name>') }.collect { it.replace('<name>', '').replace('</name>', '').trim() }
+            // Check if each metadata component exists in the source directory
+            def missingMetadata = metadataTypes.findAll { metadataType ->
+                def metadataFiles = sh(script: "ls force-app/main/default/*.${metadataType} 2> /dev/null", returnStdout: true).trim().split('\n')
+                metadataFiles.empty
+            }
+            // If any missing metadata components are found, fail the build
+            if (missingMetadata) {
+                error "Validation Failed: The following metadata components are missing in force-app/main/default: ${missingMetadata.join(', ')}"
+            } else {
+                echo "Validation Successful: All metadata components listed in package.xml are present in force-app/main/default"
+            }
+        }
+
         stage('Deploy Code') {
             if (isUnix()) {
                 sh "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
@@ -25,11 +43,11 @@ node {
                 bat "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
             }
 
-            // Deployment Command (Check Only)
+            // Deployment Command
             if (isUnix()) {
-                sh "${toolbelt} force:source:deploy --manifest manifest/package.xml -u ${HUB_ORG} --checkOnly"
+                sh "${toolbelt} force:source:deploy --manifest manifest/package.xml -u ${HUB_ORG}"
             } else {
-                bat "\"${toolbelt}\" force:source:deploy --manifest manifest/package.xml -u ${HUB_ORG} --checkOnly"
+                bat "\"${toolbelt}\" force:source:deploy --manifest manifest/package.xml -u ${HUB_ORG}"
             }
         }
     }
