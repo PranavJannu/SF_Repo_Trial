@@ -25,7 +25,12 @@ node {
             def metadataTypes = packageXmlContent.readLines().findAll { it.contains('<name>') }.collect { it.replace('<name>', '').replace('</name>', '').trim() }
             // Check if each metadata component exists in the source directory
             def missingMetadata = metadataTypes.findAll { metadataType ->
-                def metadataFiles = sh(script: "ls force-app/main/default/*.${metadataType} 2> /dev/null", returnStdout: true).trim().split('\n')
+                def metadataFiles
+                if (isUnix()) {
+                    metadataFiles = sh(script: "ls force-app/main/default/*.${metadataType} 2> /dev/null", returnStdout: true).trim().split('\n')
+                } else {
+                    metadataFiles = bat(script: "dir /B force-app/main/default\\*.${metadataType}", returnStdout: true).trim().split('\n')
+                }
                 metadataFiles.empty
             }
             // If any missing metadata components are found, fail the build
