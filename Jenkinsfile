@@ -19,6 +19,7 @@ node {
 
     withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
         stage('Validate Package.xml') {
+            echo "Checking files in: force-app/main/default" // Add this line
             // Read the package.xml file
             def packageXmlContent = readFile('manifest/package.xml')
             // Parse package.xml to extract metadata components
