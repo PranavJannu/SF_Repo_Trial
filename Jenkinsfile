@@ -29,7 +29,7 @@ node {
                 if (isUnix()) {
                     metadataFiles = sh(script: "ls force-app/main/default/*.${metadataType} 2> /dev/null", returnStdout: true).trim().split('\n')
                 } else {
-                    metadataFiles = bat(script: "dir /B force-app/main/default\\*.${metadataType}", returnStdout: true).trim().split('\n')
+                    metadataFiles = bat(script: "dir /B force-app\\main\\default\\*.${metadataType}", returnStdout: true).trim().split('\r\n')
                 }
                 metadataFiles.empty
             }
