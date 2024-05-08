@@ -1,5 +1,3 @@
-import groovy.json.JsonSlurperClassic
-
 pipeline {
     agent any
     parameters {
@@ -14,12 +12,9 @@ pipeline {
 
         stage('Validate Package.xml') {
             steps {
-                echo "Checking files in: force-app/main/default" // Add this line
-                // Read the package.xml file
+                echo "Checking files in: force-app/main/default"
                 def packageXmlContent = readFile('manifest/package.xml')
-                // Parse package.xml to extract metadata components
                 def metadataTypes = packageXmlContent.readLines().findAll { it.contains('<name>') }.collect { it.replace('<name>', '').replace('</name>', '').trim() }
-                // Check if each metadata component exists in the source directory
                 def missingMetadata = metadataTypes.findAll { metadataType ->
                     def metadataFiles
                     if (isUnix()) {
@@ -29,7 +24,6 @@ pipeline {
                     }
                     metadataFiles.empty
                 }
-                // If any missing metadata components are found, fail the build
                 if (missingMetadata) {
                     error "Validation Failed: The following metadata components are missing in force-app/main/default: ${missingMetadata.join(', ')}"
                 } else {
