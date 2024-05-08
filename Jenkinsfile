@@ -3,12 +3,13 @@ import groovy.json.JsonSlurperClassic
 pipeline {
     agent any
     parameters {
-        string(name: 'REPO_URL', defaultValue: 'https://github.com/your-username/your-repo.git', description: 'GitHub repository URL')
+        string(name: 'REPO_URL', defaultValue: 'https://github.com/PranavJannu/SF_Repo_Trial
+', description: 'GitHub repository URL')
     }
     stages {
         stage('Clone Repository') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], userRemoteConfigs: [[url: params.REPO_URL]]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/Dev-1']], userRemoteConfigs: [[url: params.REPO_URL]]])
             }
         }
 
