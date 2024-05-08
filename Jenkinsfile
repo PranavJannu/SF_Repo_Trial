@@ -12,22 +12,26 @@ pipeline {
 
         stage('Validate Package.xml') {
             steps {
-                echo "Checking files in: force-app/main/default"
-                def packageXmlContent = readFile('manifest/package.xml')
-                def metadataTypes = packageXmlContent.readLines().findAll { it.contains('<name>') }.collect { it.replace('<name>', '').replace('</name>', '').trim() }
-                def missingMetadata = metadataTypes.findAll { metadataType ->
-                    def metadataFiles
-                    if (isUnix()) {
-                        metadataFiles = sh(script: "ls force-app/main/default/*.${metadataType} 2> /dev/null", returnStdout: true).trim().split('\n')
-                    } else {
-                        metadataFiles = bat(script: "dir /B force-app\\main\\default\\*.${metadataType}", returnStdout: true).trim().split('\r\n')
+                script {
+                    // Get a list of metadata types from the package.xml
+                    def packageXmlContent = readFile('manifest/package.xml')
+                    def metadataTypes = packageXmlContent.readLines().findAll { it.contains('<name>') }.collect { it.replace('<name>', '').replace('</name>', '').trim() }
+                    
+                    // Check for each metadata type if corresponding files exist in force-app/main/default directory
+                    def missingMetadata = []
+                    metadataTypes.each { metadataType ->
+                        def files = findFiles(glob: "force-app/main/default/*.${metadataType}")
+                        if (files.isEmpty()) {
+                            missingMetadata.add(metadataType)
+                        }
                     }
-                    metadataFiles.empty
-                }
-                if (missingMetadata) {
-                    error "Validation Failed: The following metadata components are missing in force-app/main/default: ${missingMetadata.join(', ')}"
-                } else {
-                    echo "Validation Successful: All metadata components listed in package.xml are present in force-app/main/default"
+                    
+                    // If any missing metadata components are found, fail the build
+                    if (missingMetadata) {
+                        error "Validation Failed: The following metadata components are missing in force-app/main/default: ${missingMetadata.join(', ')}"
+                    } else {
+                        echo "Validation Successful: All metadata components listed in package.xml are present in force-app/main/default"
+                    }
                 }
             }
         }
