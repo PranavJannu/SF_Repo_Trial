@@ -20,7 +20,7 @@ pipeline {
                     // Check for each metadata type if corresponding files exist in force-app/main/default directory
                     def missingMetadata = []
                     metadataTypes.each { metadataType ->
-                        def files = findFiles(glob: "force-app/main/default/*.${metadataType}")
+                        def files = bat(script: "dir /B force-app\\main\\default\\*.${metadataType}", returnStdout: true).trim().split('\r\n')
                         if (files.isEmpty()) {
                             missingMetadata.add(metadataType)
                         }
