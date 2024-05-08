@@ -18,7 +18,7 @@ pipeline {
             }
         }
 
-        stage('Deploy Code') {
+        /*stage('Deploy Code') {
             steps {
                 withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
                     script {
@@ -32,7 +32,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
         // Add other stages as needed
     }
