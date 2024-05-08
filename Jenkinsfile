@@ -14,7 +14,7 @@ pipeline {
             steps {
                 script {
                     // Get a list of metadata types from the package.xml
-                    def packageXmlContent = readFile('manifest/package.xml')
+                    def packageXmlContent = readFile('C:/ProgramData/Jenkins/.jenkins/workspace/Ckeck Validation/manifest/package.xml')
                     def metadataTypes = packageXmlContent.readLines().findAll { it.contains('<name>') }.collect { it.replace('<name>', '').replace('</name>', '').trim() }
                     
                     // Check for each metadata type if corresponding files exist in force-app/main/default directory
