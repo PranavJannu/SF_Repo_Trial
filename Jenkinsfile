@@ -3,8 +3,7 @@ import groovy.json.JsonSlurperClassic
 pipeline {
     agent any
     parameters {
-        string(name: 'REPO_URL', defaultValue: 'https://github.com/PranavJannu/SF_Repo_Trial
-', description: 'GitHub repository URL')
+        string(name: 'REPO_URL', defaultValue: 'https://github.com/PranavJannu/SF_Repo_Trial', description: 'GitHub repository URL')
     }
     stages {
         stage('Clone Repository') {
