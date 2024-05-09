@@ -35,9 +35,9 @@ node {
             // Validate the deployment
             def validationExitCode
             if (isUnix()) {
-                validationExitCode = sh script: "${toolbelt} force:source:deploy --manifest manifest/deployPackage.xml --predestructivechanges manifest/destructiveChangesPre.xml --postdestructivechanges manifest/destructiveChangesPost.xml", returnStatus: true
+                validationExitCode = sh script: "${toolbelt} force:source:deploy --manifest manifest/deployPackage.xml --predestructivechanges manifest/destructiveChangesPre.xml --postdestructivechanges manifest/destructiveChangesPost.xml --targetusername ${SFDC_USERNAME}", returnStatus: true
             } else {
-                validationExitCode = bat script: "\"${toolbelt}\" force:source:deploy --manifest manifest/deployPackage.xml --predestructivechanges manifest/destructiveChangesPre.xml --postdestructivechanges manifest/destructiveChangesPost.xml", returnStatus: true
+                validationExitCode = bat script: "\"${toolbelt}\" force:source:deploy --manifest manifest/deployPackage.xml --predestructivechanges manifest/destructiveChangesPre.xml --postdestructivechanges manifest/destructiveChangesPost.xml --targetusername %SFDC_USERNAME%", returnStatus: true
             }
 
             if (validationExitCode == 0) {
