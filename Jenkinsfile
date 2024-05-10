@@ -12,14 +12,26 @@ node {
     def CONNECTED_APP_CONSUMER_KEY=env.CONNECTED_APP_CONSUMER_KEY_DH
 
     def toolbelt = tool 'toolbelt'
+    stages{
+            stage('checkout source') {
+             steps{   
+                    // when running in multi-branch job, one must issue this command
+                    checkout scm
+                    echo "Under checkout source stage"
+                }
+            }
+        }
 
-    stage('checkout source') {
-        // when running in multi-branch job, one must issue this command
-        checkout scm
+    stage('Read Files'){
+        steps{
+            //Use shell commands to read file
+            sh 'cat manifiest/package.xml'
+            echo "Reading package.xml file"
+        }
     }
 
     // Validation Stage
-    stage('Validation') {
+    /*stage('Validation') {
         steps {
             script {
                 // Download the changed files list from GitHub
@@ -50,9 +62,9 @@ node {
                 }
             }
         }
-    }
+    }*/
 
-    stage('Deploy Code') {
+    /*stage('Deploy Code') {
         withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
             if (isUnix()) {
                 sh "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
@@ -67,5 +79,5 @@ node {
                 bat "\"${toolbelt}\" force:source:deploy --manifest manifest/package.xml -u ${HUB_ORG}"
             }
         }
-    }
+    }*/
 }
