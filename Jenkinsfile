@@ -25,7 +25,26 @@ node {
         //    cat manifest/package.xml
         //"""
         def packageXmlContent = readFile 'manifest/package.xml'
-        echo "Package.xml content: ${packageXmlContent.trim()}"
+        echo "Package.xml content: ${packageXmlContent.trim()}" //Disply files present under package.xml
         echo "Reading package.xml file"
+
+        // Get the list of files in the classes, lwc, and aura directories
+        def classesFiles = sh(script: 'dir force-app/main/default/classes /b', returnStdout: true).trim().split('\n')
+        def lwcFiles = sh(script: 'dir force-app/main/default/lwc /b', returnStdout: true).trim().split('\n')
+        def auraFiles = sh(script: 'dir force-app/main/default/aura /b', returnStdout: true).trim().split('\n')
+
+        // Check if each file listed in package.xml exists in the corresponding directory
+        packageXmlContent.eachLine { line ->
+        def fileName = line.tokenize('<')[0].trim() // Extract filename from XML entry
+        if (fileName.endsWith('.cls') && !(fileName in classesFiles)) {
+            error "Class file ${fileName} listed in package.xml does not exist"
+        } else if (fileName.endsWith('.js') && !(fileName in lwcFiles)) {
+            error "LWC file ${fileName} listed in package.xml does not exist"
+        } else if (fileName.endsWith('.cmp') && !(fileName in auraFiles)) {
+            error "Aura component file ${fileName} listed in package.xml does not exist"
+        }
+    }
+
+    echo "Package.xml validation completed successfully"
     }
 }
