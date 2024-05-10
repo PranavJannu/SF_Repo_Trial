@@ -20,7 +20,6 @@ node {
                     echo "Under checkout source stage"
                 }
             }
-        }
 
     stage('Read Files'){
         steps{
@@ -29,6 +28,8 @@ node {
             echo "Reading package.xml file"
         }
     }
+    }
+}
 
     // Validation Stage
     /*stage('Validation') {
@@ -80,4 +81,4 @@ node {
             }
         }
     }*/
-}
+
