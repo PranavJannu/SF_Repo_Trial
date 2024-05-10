@@ -19,8 +19,8 @@ node {
 
     stage('Read Files') {
         // Use shell commands to read file
-        //bat 'type manifest/package.xml'
-        powershell 'Get-Content manifest/package.xml'
+        bat 'type manifest/package.xml'
+        //powershell 'Get-Content manifest/package.xml'
         echo "Reading package.xml file"
     }
 }
