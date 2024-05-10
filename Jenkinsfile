@@ -21,9 +21,11 @@ node {
         // Use shell commands to read file
         //bat 'type manifest/package.xml'
         //powershell 'Get-Content manifest/package.xml'
-        bat """
-            cat manifest/package.xml
-        """
+        //bat """
+        //    cat manifest/package.xml
+        //"""
+        def packageXmlContent = readFile 'manifest/package.xml'
+        echo "Package.xml content: ${packageXmlContent.trim()}"
         echo "Reading package.xml file"
     }
 }
