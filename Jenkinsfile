@@ -16,9 +16,9 @@ node {
         echo "Under checkout source stage"
     }
 
-    stage('Read Files') {
+    /*stage('Read Files') {
         // Use shell commands to read file
         sh 'cat manifest/package.xml'
         echo "Reading package.xml file"
-    }
+    }*/
 }
