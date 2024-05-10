@@ -1,7 +1,4 @@
-import groovy.json.JsonSlurperClassic
-
 node {
-
     def BUILD_NUMBER=env.BUILD_NUMBER
     def RUN_ARTIFACT_DIR="tests/${BUILD_NUMBER}"
     def SFDC_USERNAME
@@ -12,21 +9,16 @@ node {
     def CONNECTED_APP_CONSUMER_KEY=env.CONNECTED_APP_CONSUMER_KEY_DH
 
     def toolbelt = tool 'toolbelt'
-    stages{
-            stage('checkout source') {
-            steps{   
-                // when running in multi-branch job, one must issue this command
-                checkout scm
-                echo "Under checkout source stage"
-                }
-            }
 
-            stage('Read Files'){
-            steps{
-                //Use shell commands to read file
-                sh 'cat manifiest/package.xml'
-                echo "Reading package.xml file"
-                }
-            }
+    stage('checkout source') {
+        // when running in multi-branch job, one must issue this command
+        checkout scm
+        echo "Under checkout source stage"
     }
-} 
+
+    stage('Read Files') {
+        // Use shell commands to read file
+        sh 'cat manifiest/package.xml'
+        echo "Reading package.xml file"
+    }
+}
