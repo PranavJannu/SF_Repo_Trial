@@ -18,7 +18,7 @@ node {
 
     stage('Read Files') {
         // Use shell commands to read file
-        sh 'cat manifiest/package.xml'
+        sh 'cat manifest/package.xml'
         echo "Reading package.xml file"
     }
 }
