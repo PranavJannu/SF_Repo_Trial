@@ -14,6 +14,7 @@ node {
         // when running in multi-branch job, one must issue this command
         checkout scm
         echo "Under checkout source stage"
+        bat 'git ls-files'
     }
 
     stage('Read Files') {
