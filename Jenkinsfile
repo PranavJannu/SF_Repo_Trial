@@ -32,12 +32,19 @@ node {
             echo fileName
         }
 
-        // Check if each class listed in package.xml exists in the classes directory
-        packageXmlContent.eachLine { line ->
-        def fileName = line.tokenize('<')[0].trim() // Extract filename from XML entry
-        if (fileName.endsWith('.cls') && !(fileName in classesFiles)) {
-            error "Class file ${fileName} listed in package.xml does not exist in the classes directory"
-            }
+         def packageClasses = packageXmlContent.readLines().findAll { it.contains('<name>') }
+            .collect { it.replaceAll(/<name>|<\/name>/, '').trim() }
+
+        def missingClasses = packageClasses.findAll { className ->
+            !classesFiles.any { it.endsWith("/${className}.cls") }
+        }
+
+        if (missingClasses) {
+            echo "Missing classes in package.xml:"
+            missingClasses.each { echo it }
+            error "Validation failed: Some classes are missing in package.xml"
+        } else {
+            echo "All classes are present in package.xml"
         }
     }
 }
