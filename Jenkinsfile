@@ -32,8 +32,9 @@ node {
             echo fileName
         }
 
-         def packageClasses = packageXmlContent.readLines().findAll { it.contains('<name>') }
-            .collect { it.replaceAll(/<name>|<\/name>/, '').trim() }
+        // Validate class names
+        def packageClasses = packageXmlContent.readLines().findAll { it.contains('<name>ApexClass</name>') }
+            .collect { it.replaceAll(/<members>|<\/members>/, '').trim() }
 
         def missingClasses = packageClasses.findAll { className ->
             !classesFiles.any { it.endsWith("/${className}.cls") }
@@ -46,5 +47,6 @@ node {
         } else {
             echo "All classes are present in package.xml"
         }
+
     }
 }
