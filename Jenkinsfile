@@ -31,5 +31,13 @@ node {
         classesFiles.each { fileName ->
             echo fileName
         }
+
+        // Check if each class listed in package.xml exists in the classes directory
+        packageXmlContent.eachLine { line ->
+        def fileName = line.tokenize('<')[0].trim() // Extract filename from XML entry
+        if (fileName.endsWith('.cls') && !(fileName in classesFiles)) {
+            error "Class file ${fileName} listed in package.xml does not exist in the classes directory"
+            }
+        }
     }
 }
