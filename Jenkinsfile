@@ -44,7 +44,11 @@ node {
             echo className
         }
 
-        // Validate class names
+    // Convert class names and file names to lowercase for case-insensitive comparison
+        def lowercasePackageClasses = packageClasses.collect { it.toLowerCase() }
+        def lowercaseClassesFiles = classesFiles.collect { it.toLowerCase() }
+
+    // Validate class names
         def missingClasses = packageClasses.findAll { className ->
             !classesFiles.any { it.endsWith("/${className}.cls") }
         }
