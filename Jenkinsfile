@@ -31,16 +31,20 @@ node {
         classesFiles.each { fileName ->
             echo fileName
         }
-
-        // Validate class names
-        def packageClasses = packageXmlContent.readLines().findAll { it.contains('<members>') && it.contains('</members>') }
-            .collect { it.replaceAll(/<members>|<\/members>/, '').trim() }
+    
+    // Extract class names from package.xml, excluding wildcard entries
+        def packageClasses = packageXmlContent.readLines().findAll { line ->
+            line.contains('<members>') && line.contains('</members>') && !line.contains('<members>*</members>')
+        }.collect { line ->
+            line.replaceAll(/<members>|<\/members>/, '').trim()
+        }
 
         echo "Extracted class names from package.xml:"
         packageClasses.each { className ->
             echo className
         }
-        
+
+        // Validate class names
         def missingClasses = packageClasses.findAll { className ->
             !classesFiles.any { it.endsWith("/${className}.cls") }
         }
@@ -52,7 +56,5 @@ node {
         } else {
             echo "All classes are present in package.xml"
         }
-
-
     }
 }
