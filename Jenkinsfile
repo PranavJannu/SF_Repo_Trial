@@ -36,6 +36,11 @@ node {
         def packageClasses = packageXmlContent.readLines().findAll { it.contains('<name>ApexClass</name>') }
             .collect { it.replaceAll(/<members>|<\/members>/, '').trim() }
 
+        echo "Extracted class names from package.xml:"
+        packageClasses.each { className ->
+            echo className
+        }
+        
         def missingClasses = packageClasses.findAll { className ->
             !classesFiles.any { it.endsWith("/${className}.cls") }
         }
