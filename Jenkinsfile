@@ -33,7 +33,7 @@ node {
         }
 
         // Validate class names
-        def packageClasses = packageXmlContent.readLines().findAll { it.contains('<name>ApexClass</name>') }
+        def packageClasses = packageXmlContent.readLines().findAll { it.contains('<members>') && it.contains('</members>') }
             .collect { it.replaceAll(/<members>|<\/members>/, '').trim() }
 
         echo "Extracted class names from package.xml:"
@@ -52,6 +52,7 @@ node {
         } else {
             echo "All classes are present in package.xml"
         }
+
 
     }
 }
