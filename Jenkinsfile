@@ -29,15 +29,17 @@ node {
             echo fileName
         }
 
-        // Validate class names
+        // Extract class name from package.xml
         def packageClasses = packageXmlContent.readLines().findAll { line ->
             line.contains('<members>') && line.contains('</members>') && !line.contains('<members>*</members>')
         }.collect { line ->
             line.replaceAll(/<members>|<\/members>/, '').trim()
         }
 
+        // Extract existing class names from files    
         def existingClasses = classesFiles.collect { it.replaceAll(/^.*\//, '').replaceAll(/\.cls$/, '') }
-
+    
+        // Find missing classes
         def missingClasses = packageClasses.findAll { className ->
             !(className in existingClasses)
         }
