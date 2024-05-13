@@ -1,17 +1,16 @@
 node {
-    def BUILD_NUMBER=env.BUILD_NUMBER
-    def RUN_ARTIFACT_DIR="tests/${BUILD_NUMBER}"
+    def BUILD_NUMBER = env.BUILD_NUMBER
+    def RUN_ARTIFACT_DIR = "tests/${BUILD_NUMBER}"
     def SFDC_USERNAME
 
-    def HUB_ORG=env.HUB_ORG_DH
+    def HUB_ORG = env.HUB_ORG_DH
     def SFDC_HOST = env.SFDC_HOST_DH
     def JWT_KEY_CRED_ID = env.JWT_CRED_ID_DH
-    def CONNECTED_APP_CONSUMER_KEY=env.CONNECTED_APP_CONSUMER_KEY_DH
+    def CONNECTED_APP_CONSUMER_KEY = env.CONNECTED_APP_CONSUMER_KEY_DH
 
     def toolbelt = tool 'toolbelt'
 
     stage('checkout source') {
-        // when running in multi-branch job, one must issue this command
         checkout scm
         echo "Under checkout source stage"
         bat 'git ls-files'
@@ -19,20 +18,18 @@ node {
 
     stage('Read Files') {
         def packageXmlContent = readFile 'manifest/package.xml'
-        echo "Package.xml content: ${packageXmlContent.trim()}" //Disply files present under package.xml
+        echo "Package.xml content: ${packageXmlContent.trim()}"
         echo "Reading package.xml file"
 
-        // Get the list of files in the classes directory
         def classesDir = 'force-app/main/default/classes'
         def classesFiles = findFiles(glob: "${classesDir}/**/*.cls").collect { it.path }
 
-        // Output the files present in the classes directory
         echo "Files in ${classesDir}:"
         classesFiles.each { fileName ->
             echo fileName
         }
-    
-    // Extract class names from package.xml, excluding wildcard entries
+
+        // Extract class names from package.xml, excluding wildcard entries
         def packageClasses = packageXmlContent.readLines().findAll { line ->
             line.contains('<members>') && line.contains('</members>') && !line.contains('<members>*</members>')
         }.collect { line ->
@@ -44,17 +41,13 @@ node {
             echo className
         }
 
-    // Convert class names and file names to lowercase for case-insensitive comparison
+        // Convert class names and file names to lowercase for case-insensitive comparison
         def lowercasePackageClasses = packageClasses.collect { it.toLowerCase() }
         def lowercaseClassesFiles = classesFiles.collect { it.toLowerCase() }
 
-    
-    // Validate class names
-        def existingClasses = bat(script: 'dir /B force-app\\main\\default\\classes\\*.cls',
-        returnStdout:true).trim().split('\n').collect{ it.replaceAll(/^.*\//,'').replaceAll(/\.cls$/,'')}
-
-        def missingClasses = packageClasses.findAll { className ->
-            !(className in existingClasses)
+        // Validate class names
+        def missingClasses = lowercasePackageClasses.findAll { className ->
+            !(className in lowercaseClassesFiles)
         }
 
         if (missingClasses) {
