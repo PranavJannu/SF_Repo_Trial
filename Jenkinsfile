@@ -48,9 +48,13 @@ node {
         def lowercasePackageClasses = packageClasses.collect { it.toLowerCase() }
         def lowercaseClassesFiles = classesFiles.collect { it.toLowerCase() }
 
+    
     // Validate class names
+        def existingClasses = bat(script: 'dir /B force-app\\main\\default\\classes\\*.cls',
+        returnStdout:true).trim().split('\n').collect{ it.replaceAll(/^.*\//,'').replaceAll(/\.cls$/,'')}
+
         def missingClasses = packageClasses.findAll { className ->
-            !classesFiles.any { it.endsWith("/${className}.cls") }
+            !(className in existingClasses)
         }
 
         if (missingClasses) {
