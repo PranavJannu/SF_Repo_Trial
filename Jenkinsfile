@@ -29,14 +29,14 @@ node {
             echo fileName
         }
 
-        // Validate class names (case-insensitive)
+        // Validate class names
         def packageClasses = packageXmlContent.readLines().findAll { line ->
             line.contains('<members>') && line.contains('</members>') && !line.contains('<members>*</members>')
         }.collect { line ->
-            line.replaceAll(/<members>|<\/members>/, '').trim().toLowerCase()
+            line.replaceAll(/<members>|<\/members>/, '').trim()
         }
 
-        def existingClasses = classesFiles.collect { it.replaceAll(/^.*\//, '').replaceAll(/\.cls$/, '').toLowerCase() }
+        def existingClasses = classesFiles.collect { it.replaceAll(/^.*\//, '').replaceAll(/\.cls$/, '') }
 
         def missingClasses = packageClasses.findAll { className ->
             !(className in existingClasses)
